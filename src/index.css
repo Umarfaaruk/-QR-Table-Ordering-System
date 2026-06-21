@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply font-sans antialiased;
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep scroll functionality (for category tabs) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-mode: none;
+    scrollbar-width: none;
+  }
+
+  /* Thin styled scrollbar for dark panels */
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(245, 166, 35, 0.4);
+    border-radius: 9999px;
+  }
+}
+
+/* Custom range/scroll offset so sticky tabs don't cover headings */
+.scroll-anchor {
+  scroll-margin-top: 120px;
+}
+
+/* Print styles for QR code sheet */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
