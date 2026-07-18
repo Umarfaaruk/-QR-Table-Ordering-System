@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { ShoppingBag, ArrowLeft, Clock, CheckCircle2 } from 'lucide-react'
+import { ShoppingBag, ArrowLeft, Clock, CheckCircle2, Star } from 'lucide-react'
 import { CATEGORIES, type Category, type MenuItem, type CartItem, type Order } from '../types'
 import { useMenuItems } from '../hooks/useMenuItems'
 import { placeOrder } from '../firebase/orderService'
 import { formatINR, summariseItems } from '../utils/format'
 import MenuCard from '../components/MenuCard'
 import CartDrawer from '../components/CartDrawer'
+import AuroraBackground from '../components/AuroraBackground'
 
 function tableLabel(tableId: string): string {
   const num = tableId.replace(/^table-?/i, '')
@@ -29,7 +30,6 @@ export default function CustomerMenu() {
 
   const tableNumber = tableLabel(tableId)
 
-  // Group items by category, preserving the canonical category order.
   const grouped = useMemo(() => {
     const map: Record<Category, MenuItem[]> = {
       Starters: [],
@@ -80,11 +80,10 @@ export default function CustomerMenu() {
     }, 700)
   }
 
-  // Highlight the tab for whichever section is in view while scrolling.
   useEffect(() => {
     const handler = () => {
       if (isManualScroll.current) return
-      const offset = 160
+      const offset = 180
       let current = CATEGORIES[0]
       for (const cat of CATEGORIES) {
         const el = sectionRefs.current[cat]
@@ -125,27 +124,29 @@ export default function CustomerMenu() {
     }
   }
 
-  // ── Success screen ─────────────────────────────────────────
   if (placedOrder) {
     return <OrderSuccess order={placedOrder} onNewOrder={() => setPlacedOrder(null)} />
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="relative mx-auto min-h-screen max-w-[480px] bg-gray-50 shadow-xl">
+    <div className="relative min-h-screen text-white">
+      <AuroraBackground subtle />
+      <div className="relative mx-auto min-h-screen max-w-[480px]">
         {/* Top banner */}
-        <header className="sticky top-0 z-30 bg-charcoal text-white">
+        <header className="sticky top-0 z-30 glass-strong">
           <div className="flex items-center justify-between px-4 py-3.5">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold text-charcoal">
+            <Link to="/" className="flex items-center gap-2.5">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-gold text-charcoal shadow-glow-gold">
                 🌶️
               </span>
               <div className="leading-tight">
-                <p className="text-base font-extrabold">Café Spice</p>
-                <p className="text-[11px] text-white/50">Hyderabad</p>
+                <p className="font-display text-base font-bold">Café Spice</p>
+                <p className="flex items-center gap-1 text-[11px] text-white/45">
+                  <Star size={10} className="fill-gold text-gold" /> 4.8 · Hyderabad
+                </p>
               </div>
             </Link>
-            <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold text-charcoal">
+            <span className="rounded-full bg-gradient-gold px-3 py-1 text-xs font-bold text-charcoal shadow-glow-gold">
               {tableNumber}
             </span>
           </div>
@@ -158,8 +159,8 @@ export default function CustomerMenu() {
                 onClick={() => scrollToCategory(cat)}
                 className={`flex-none whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                   activeCategory === cat
-                    ? 'bg-gold text-charcoal'
-                    : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    ? 'bg-gradient-gold text-charcoal shadow-glow-gold'
+                    : 'border border-white/10 bg-white/5 text-white/60 hover:text-white'
                 }`}
               >
                 {cat}
@@ -182,11 +183,11 @@ export default function CustomerMenu() {
                   ref={(el) => {
                     sectionRefs.current[cat] = el
                   }}
-                  className="scroll-anchor mb-6"
+                  className="scroll-anchor mb-7"
                 >
-                  <h2 className="mb-3 px-1 text-lg font-extrabold text-gray-900">
+                  <h2 className="mb-3 flex items-center gap-2 px-1 font-display text-lg font-bold text-white">
                     {cat}
-                    <span className="ml-2 text-sm font-medium text-gray-400">
+                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-xs font-medium text-white/40">
                       {list.length}
                     </span>
                   </h2>
@@ -213,15 +214,13 @@ export default function CustomerMenu() {
           <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 px-3 pb-3">
             <button
               onClick={() => setCartOpen(true)}
-              className="flex w-full items-center justify-between rounded-2xl bg-gold px-5 py-3.5 text-charcoal shadow-2xl shadow-gold/30 transition active:scale-[0.98] animate-slide-up"
+              className="flex w-full animate-slide-up items-center justify-between rounded-2xl bg-gradient-gold px-5 py-3.5 text-charcoal shadow-glow-gold transition active:scale-[0.98]"
             >
               <span className="flex items-center gap-2 font-bold">
                 <ShoppingBag size={20} />
                 {cartCount} item{cartCount === 1 ? '' : 's'} • {formatINR(cartTotal)}
               </span>
-              <span className="flex items-center gap-1 font-extrabold">
-                Place Order →
-              </span>
+              <span className="font-black">Place Order →</span>
             </button>
           </div>
         )}
@@ -244,48 +243,49 @@ export default function CustomerMenu() {
 // ── Success screen ───────────────────────────────────────────
 function OrderSuccess({ order, onNewOrder }: { order: Order; onNewOrder: () => void }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto flex min-h-screen max-w-[480px] flex-col bg-white px-6 py-10 shadow-xl">
+    <div className="relative min-h-screen text-white">
+      <AuroraBackground />
+      <div className="relative mx-auto flex min-h-screen max-w-[480px] flex-col px-6 py-10">
         <div className="flex flex-1 flex-col items-center justify-center text-center">
-          <div className="mb-4 flex h-24 w-24 animate-bounce-in items-center justify-center rounded-full bg-green-100">
-            <CheckCircle2 size={56} className="text-green-600" />
+          <div className="relative mb-4">
+            <div className="absolute inset-0 animate-glow-pulse rounded-full bg-green-500/40 blur-2xl" />
+            <div className="relative flex h-24 w-24 animate-bounce-in items-center justify-center rounded-full border border-green-400/40 bg-green-500/15">
+              <CheckCircle2 size={56} className="text-green-400" />
+            </div>
           </div>
-          <h1 className="text-2xl font-black text-gray-900">Order Placed! 🎉</h1>
-          <p className="mt-2 text-gray-500">Your food is being prepared.</p>
+          <h1 className="font-display text-2xl font-bold">Order Placed! 🎉</h1>
+          <p className="mt-2 text-white/55">Your food is being prepared.</p>
 
-          <div className="mt-3 flex items-center gap-2 rounded-full bg-gold/10 px-4 py-2 text-gold-dark">
+          <div className="mt-4 flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-gold">
             <Clock size={18} />
             <span className="font-bold">Estimated wait: ~20 minutes</span>
           </div>
 
-          {/* Order summary */}
-          <div className="mt-8 w-full rounded-2xl border border-gray-100 bg-gray-50 p-5 text-left">
-            <div className="flex items-center justify-between border-b border-dashed border-gray-200 pb-3">
-              <span className="font-bold text-gray-900">{order.orderId}</span>
-              <span className="rounded-full bg-charcoal px-3 py-0.5 text-xs font-bold text-gold">
+          <div className="mt-8 w-full rounded-2xl glass p-5 text-left">
+            <div className="flex items-center justify-between border-b border-dashed border-white/15 pb-3">
+              <span className="font-display font-bold text-white">{order.orderId}</span>
+              <span className="rounded-full bg-gradient-gold px-3 py-0.5 text-xs font-bold text-charcoal">
                 {order.tableNumber}
               </span>
             </div>
             <ul className="space-y-2 py-3">
               {order.items.map((it) => (
                 <li key={it.id} className="flex justify-between text-sm">
-                  <span className="text-gray-700">
+                  <span className="text-white/70">
                     {it.quantity}× {it.name}
                   </span>
-                  <span className="font-semibold text-gray-900">
-                    {formatINR(it.price * it.quantity)}
-                  </span>
+                  <span className="font-semibold text-white">{formatINR(it.price * it.quantity)}</span>
                 </li>
               ))}
             </ul>
             {order.specialInstructions && (
-              <p className="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              <p className="mb-3 rounded-lg border border-gold/20 bg-gold/10 px-3 py-2 text-xs text-gold">
                 📝 {order.specialInstructions}
               </p>
             )}
-            <div className="flex items-center justify-between border-t border-dashed border-gray-200 pt-3">
-              <span className="font-bold text-gray-900">Total</span>
-              <span className="text-lg font-black text-gray-900">
+            <div className="flex items-center justify-between border-t border-dashed border-white/15 pt-3">
+              <span className="font-bold text-white">Total</span>
+              <span className="font-display text-lg font-bold text-gradient-gold">
                 {formatINR(order.totalAmount)}
               </span>
             </div>
@@ -295,21 +295,19 @@ function OrderSuccess({ order, onNewOrder }: { order: Order; onNewOrder: () => v
         <div className="mt-8 space-y-3">
           <button
             onClick={onNewOrder}
-            className="w-full rounded-xl bg-gold py-3.5 font-bold text-white transition hover:bg-gold-dark"
+            className="w-full rounded-xl bg-gradient-gold py-3.5 font-bold text-charcoal shadow-glow-gold transition hover:brightness-105"
           >
             Order More Items
           </button>
           <Link
             to="/"
-            className="flex items-center justify-center gap-2 text-sm font-semibold text-gray-400 hover:text-gray-600"
+            className="flex items-center justify-center gap-2 text-sm font-semibold text-white/40 hover:text-white/70"
           >
             <ArrowLeft size={16} /> Back to home
           </Link>
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-400">
-          {summariseItems(order.items)}
-        </p>
+        <p className="mt-6 text-center text-xs text-white/30">{summariseItems(order.items)}</p>
       </div>
     </div>
   )
@@ -319,16 +317,16 @@ function OrderSuccess({ order, onNewOrder }: { order: Order; onNewOrder: () => v
 function MenuSkeleton() {
   return (
     <div className="space-y-3">
-      <div className="mb-3 h-6 w-32 animate-pulse rounded bg-gray-200" />
+      <div className="mb-3 h-6 w-32 rounded shimmer" />
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex gap-3 rounded-2xl border border-gray-100 bg-white p-3">
-          <div className="h-24 w-24 flex-none animate-pulse rounded-xl bg-gray-200" />
+        <div key={i} className="flex gap-3 rounded-2xl glass p-3">
+          <div className="h-24 w-24 flex-none rounded-xl shimmer" />
           <div className="flex flex-1 flex-col gap-2 py-1">
-            <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
-            <div className="h-3 w-full animate-pulse rounded bg-gray-100" />
+            <div className="h-4 w-3/4 rounded shimmer" />
+            <div className="h-3 w-full rounded shimmer" />
             <div className="mt-auto flex justify-between">
-              <div className="h-4 w-12 animate-pulse rounded bg-gray-200" />
-              <div className="h-7 w-16 animate-pulse rounded-lg bg-gray-200" />
+              <div className="h-4 w-12 rounded shimmer" />
+              <div className="h-7 w-16 rounded-lg shimmer" />
             </div>
           </div>
         </div>

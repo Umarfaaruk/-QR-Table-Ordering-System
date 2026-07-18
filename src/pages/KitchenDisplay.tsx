@@ -17,6 +17,7 @@ import { formatINR, formatTime, summariseItems } from '../utils/format'
 import { playDing } from '../utils/sound'
 import { DEMO_MODE } from '../firebase/config'
 import OrderCard from '../components/OrderCard'
+import AuroraBackground from '../components/AuroraBackground'
 
 function useClock() {
   const [now, setNow] = useState(() => new Date())
@@ -35,7 +36,6 @@ export default function KitchenDisplay() {
   const soundOnRef = useRef(soundOn)
   soundOnRef.current = soundOn
 
-  // Ding + toast whenever a new order lands.
   useEffect(() => {
     if (!newOrderId) return
     const order = orders.find((o) => o.id === newOrderId)
@@ -46,30 +46,24 @@ export default function KitchenDisplay() {
     clearNewOrder()
   }, [newOrderId, orders, clearNewOrder])
 
-  const active = useMemo(
-    () => orders.filter((o) => o.status !== 'completed'),
-    [orders],
-  )
-  const completed = useMemo(
-    () => orders.filter((o) => o.status === 'completed'),
-    [orders],
-  )
+  const active = useMemo(() => orders.filter((o) => o.status !== 'completed'), [orders])
+  const completed = useMemo(() => orders.filter((o) => o.status === 'completed'), [orders])
 
   const advance = async (order: Order, next: OrderStatus) => {
     try {
       await updateOrderStatus(order.id, next)
-      if (next === 'completed') {
-        toast.success(`${order.orderId} completed ✓`)
-      }
+      if (next === 'completed') toast.success(`${order.orderId} completed ✓`)
     } catch {
       toast.error('Failed to update order')
     }
   }
 
   return (
-    <div className="min-h-screen bg-kitchen text-white">
+    <div className="relative min-h-screen text-white">
+      <AuroraBackground subtle />
+
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-kitchen/95 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-white/10 glass-strong">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">
             <Link
@@ -79,35 +73,30 @@ export default function KitchenDisplay() {
             >
               <ArrowLeft size={20} />
             </Link>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold text-charcoal">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-gold text-charcoal shadow-glow-gold">
               <ChefHat size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-black leading-tight md:text-2xl">
-                Kitchen Display
-              </h1>
+              <h1 className="font-display text-xl font-bold leading-tight md:text-2xl">Kitchen Display</h1>
               <p className="text-xs text-white/40">Café Spice — Hyderabad</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Counts */}
             <div className="hidden items-center gap-4 sm:flex">
               <Stat label="Active" value={active.length} accent="text-gold" />
               <Stat label="Completed Today" value={completed.length} accent="text-green-400" />
             </div>
-            {/* Sound toggle */}
             <button
               onClick={() => setSoundOn((s) => !s)}
-              className="rounded-lg border border-white/10 p-2.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+              className="rounded-lg border border-white/10 bg-white/5 p-2.5 text-white/60 transition hover:bg-white/10 hover:text-white"
               aria-label={soundOn ? 'Mute notifications' : 'Unmute notifications'}
               title={soundOn ? 'Sound on' : 'Sound off'}
             >
               {soundOn ? <Volume2 size={20} /> : <VolumeX size={20} />}
             </button>
-            {/* Live clock */}
-            <div className="rounded-xl bg-white/5 px-4 py-2 text-center font-mono tabular-nums">
-              <p className="text-xl font-bold leading-none">
+            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-center font-mono tabular-nums">
+              <p className="text-xl font-bold leading-none text-gradient-gold">
                 {now.toLocaleTimeString('en-GB')}
               </p>
               <p className="mt-0.5 text-[10px] uppercase tracking-widest text-white/40">
@@ -117,7 +106,6 @@ export default function KitchenDisplay() {
           </div>
         </div>
 
-        {/* Mobile counts */}
         <div className="flex items-center justify-center gap-6 border-t border-white/5 py-2 sm:hidden">
           <Stat label="Active" value={active.length} accent="text-gold" />
           <Stat label="Completed" value={completed.length} accent="text-green-400" />
@@ -125,8 +113,9 @@ export default function KitchenDisplay() {
       </header>
 
       {DEMO_MODE && (
-        <div className="border-b border-gold/20 bg-gold/5 px-5 py-2 text-center text-xs text-gold/80">
-          🔴 Demo mode — a fresh order drops in automatically every 30 seconds.
+        <div className="border-b border-gold/20 bg-gold/5 px-5 py-2 text-center text-xs text-gold/90">
+          <span className="mr-1 inline-block h-1.5 w-1.5 animate-glow-pulse rounded-full bg-gold align-middle" />
+          Demo mode — a fresh order drops in automatically every 30 seconds.
         </div>
       )}
 
@@ -144,16 +133,15 @@ export default function KitchenDisplay() {
           </div>
         )}
 
-        {/* Completed today */}
         {completed.length > 0 && (
           <section className="mt-10">
             <button
               onClick={() => setShowCompleted((s) => !s)}
-              className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-left transition hover:bg-white/10"
+              className="flex w-full items-center justify-between rounded-xl glass px-5 py-3.5 text-left transition hover:border-white/20"
             >
               <span className="font-bold text-white/80">
                 Completed Today
-                <span className="ml-2 rounded-full bg-green-500/20 px-2.5 py-0.5 text-sm text-green-400">
+                <span className="ml-2 rounded-full bg-green-500/20 px-2.5 py-0.5 text-sm text-green-300">
                   {completed.length}
                 </span>
               </span>
@@ -161,7 +149,7 @@ export default function KitchenDisplay() {
             </button>
 
             {showCompleted && (
-              <div className="mt-3 overflow-hidden rounded-xl border border-white/10">
+              <div className="mt-3 overflow-hidden rounded-xl glass">
                 <table className="w-full text-sm">
                   <thead className="bg-white/5 text-left text-white/40">
                     <tr>
@@ -200,7 +188,7 @@ export default function KitchenDisplay() {
 function Stat({ label, value, accent }: { label: string; value: number; accent: string }) {
   return (
     <div className="text-center">
-      <p className={`text-2xl font-black leading-none ${accent}`}>{value}</p>
+      <p className={`font-display text-2xl font-bold leading-none ${accent}`}>{value}</p>
       <p className="text-[10px] uppercase tracking-wider text-white/40">{label}</p>
     </div>
   )
@@ -209,13 +197,14 @@ function Stat({ label, value, accent }: { label: string; value: number; accent: 
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-28 text-center">
-      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white/5">
-        <Inbox size={48} className="text-white/30" />
+      <div className="relative">
+        <div className="absolute inset-0 animate-glow-pulse rounded-full bg-gold/20 blur-2xl" />
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/5">
+          <Inbox size={48} className="text-white/40" />
+        </div>
       </div>
-      <h2 className="mt-6 text-2xl font-bold text-white/80">No active orders</h2>
-      <p className="mt-2 text-white/40">
-        New orders will appear here the moment a customer places them.
-      </p>
+      <h2 className="mt-6 font-display text-2xl font-bold text-white/80">All caught up</h2>
+      <p className="mt-2 text-white/40">New orders will appear here the moment a customer places them.</p>
     </div>
   )
 }
@@ -224,10 +213,7 @@ function KitchenSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-64 animate-pulse rounded-2xl border-2 border-white/5 bg-kitchen-card"
-        />
+        <div key={i} className="h-64 rounded-2xl glass shimmer" />
       ))}
     </div>
   )

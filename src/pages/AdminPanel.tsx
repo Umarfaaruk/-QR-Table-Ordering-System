@@ -26,6 +26,7 @@ import AdminLogin from './AdminLogin'
 import MenuItemModal from '../components/MenuItemModal'
 import QRGenerator from '../components/QRGenerator'
 import VegBadge from '../components/VegBadge'
+import AuroraBackground from '../components/AuroraBackground'
 
 type Tab = 'menu' | 'qr' | 'history'
 
@@ -41,8 +42,9 @@ export default function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-charcoal text-gold">
-        <Loader2 size={32} className="animate-spin" />
+      <div className="relative flex min-h-screen items-center justify-center text-gold">
+        <AuroraBackground />
+        <Loader2 size={32} className="relative animate-spin" />
       </div>
     )
   }
@@ -50,23 +52,25 @@ export default function AdminPanel() {
   if (!isAuthed) return <AdminLogin />
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="relative min-h-screen text-white">
+      <AuroraBackground subtle />
+
       {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-gray-200 bg-white">
+      <header className="sticky top-0 z-30 border-b border-white/10 glass-strong">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold text-charcoal">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-gold text-charcoal shadow-glow-gold">
               <UtensilsCrossed size={20} strokeWidth={2.5} />
             </div>
             <div className="leading-tight">
-              <p className="font-extrabold text-gray-900">Café Spice</p>
-              <p className="text-[11px] text-gray-400">Admin Dashboard</p>
+              <p className="font-display font-bold">Café Spice</p>
+              <p className="text-[11px] text-white/40">Admin Dashboard</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Link
               to="/"
-              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-500 transition hover:bg-gray-100"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-white/50 transition hover:bg-white/10 hover:text-white"
             >
               <Home size={16} /> <span className="hidden sm:inline">Home</span>
             </Link>
@@ -75,7 +79,7 @@ export default function AdminPanel() {
                 await signOut()
                 toast.success('Signed out')
               }}
-              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/10"
             >
               <LogOut size={16} /> <span className="hidden sm:inline">Logout</span>
             </button>
@@ -93,9 +97,7 @@ export default function AdminPanel() {
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-bold transition ${
-                    active
-                      ? 'border-gold text-gold-dark'
-                      : 'border-transparent text-gray-400 hover:text-gray-600'
+                    active ? 'border-gold text-gold' : 'border-transparent text-white/40 hover:text-white/70'
                   }`}
                 >
                   <Icon size={16} /> {t.label}
@@ -107,8 +109,9 @@ export default function AdminPanel() {
       </header>
 
       {DEMO_MODE && (
-        <div className="border-b border-gold/20 bg-gold/5 px-5 py-2 text-center text-xs text-gold-dark">
-          🔴 Demo mode — changes are stored in-memory for this session only.
+        <div className="border-b border-gold/20 bg-gold/5 px-5 py-2 text-center text-xs text-gold/90">
+          <span className="mr-1 inline-block h-1.5 w-1.5 animate-glow-pulse rounded-full bg-gold align-middle" />
+          Demo mode — changes are stored in-memory for this session only.
         </div>
       )}
 
@@ -179,12 +182,12 @@ function MenuManagement() {
     <div>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-gray-900">Menu Management</h1>
-          <p className="text-sm text-gray-400">{items.length} items across {grouped.length} categories</p>
+          <h1 className="font-display text-xl font-bold text-white">Menu Management</h1>
+          <p className="text-sm text-white/40">{items.length} items across {grouped.length} categories</p>
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 rounded-xl bg-gold px-4 py-2.5 font-bold text-white transition hover:bg-gold-dark"
+          className="flex items-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 font-bold text-charcoal shadow-glow-gold transition hover:brightness-105"
         >
           <Plus size={18} /> Add New Item
         </button>
@@ -193,42 +196,42 @@ function MenuManagement() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-xl bg-white" />
+            <div key={i} className="h-16 rounded-xl glass shimmer" />
           ))}
         </div>
       ) : (
         <div className="space-y-6">
           {grouped.map(({ cat, items: list }) => (
-            <div key={cat} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <div className="border-b border-gray-100 bg-gray-50 px-5 py-3">
-                <h2 className="font-bold text-gray-700">{cat}</h2>
+            <div key={cat} className="overflow-hidden rounded-2xl glass">
+              <div className="border-b border-white/10 bg-white/5 px-5 py-3">
+                <h2 className="font-display font-bold text-white/80">{cat}</h2>
               </div>
               <table className="w-full text-sm">
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-white/5">
                   {list.map((item) => (
-                    <tr key={item.id} className="transition hover:bg-gray-50/50">
+                    <tr key={item.id} className="transition hover:bg-white/[0.03]">
                       <td className="w-12 py-3 pl-5 text-2xl">{item.emoji}</td>
                       <td className="py-3">
                         <div className="flex items-center gap-2">
                           <VegBadge isVeg={item.isVeg} size={14} />
-                          <span className="font-bold text-gray-900">{item.name}</span>
+                          <span className="font-bold text-white">{item.name}</span>
                         </div>
-                        <p className="text-xs text-gray-400">{item.description}</p>
+                        <p className="text-xs text-white/40">{item.description}</p>
                       </td>
-                      <td className="hidden py-3 text-gray-500 sm:table-cell">{item.category}</td>
-                      <td className="py-3 font-bold text-gray-900">{formatINR(item.price)}</td>
+                      <td className="hidden py-3 text-white/50 sm:table-cell">{item.category}</td>
+                      <td className="py-3 font-bold text-gradient-gold">{formatINR(item.price)}</td>
                       <td className="py-3 pr-5 text-right">
                         <div className="flex justify-end gap-1">
                           <button
                             onClick={() => openEdit(item)}
-                            className="rounded-lg p-2 text-gray-400 transition hover:bg-gold/10 hover:text-gold-dark"
+                            className="rounded-lg p-2 text-white/40 transition hover:bg-gold/10 hover:text-gold"
                             aria-label="Edit"
                           >
                             <Pencil size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(item)}
-                            className="rounded-lg p-2 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                            className="rounded-lg p-2 text-white/40 transition hover:bg-red-500/10 hover:text-red-400"
                             aria-label="Delete"
                           >
                             <Trash2 size={16} />
@@ -262,10 +265,10 @@ function MenuManagement() {
 type DateFilter = 'today' | 'week' | 'all'
 
 const STATUS_PILL: Record<OrderStatus, string> = {
-  pending: 'bg-red-100 text-red-700',
-  preparing: 'bg-amber-100 text-amber-700',
-  ready: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
+  pending: 'bg-red-500/15 text-red-300 border border-red-500/25',
+  preparing: 'bg-gold/15 text-gold border border-gold/25',
+  ready: 'bg-blue-500/15 text-blue-300 border border-blue-500/25',
+  completed: 'bg-green-500/15 text-green-300 border border-green-500/25',
 }
 
 function OrderHistory() {
@@ -288,17 +291,16 @@ function OrderHistory() {
     <div>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-black text-gray-900">Order History</h1>
-          <p className="text-sm text-gray-400">Track every order placed across all tables</p>
+          <h1 className="font-display text-xl font-bold text-white">Order History</h1>
+          <p className="text-sm text-white/40">Track every order placed across all tables</p>
         </div>
-        {/* Filter */}
-        <div className="flex rounded-xl border border-gray-200 bg-white p-1">
+        <div className="flex rounded-xl border border-white/10 bg-white/5 p-1">
           {(['today', 'week', 'all'] as DateFilter[]).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={`rounded-lg px-4 py-1.5 text-sm font-semibold capitalize transition ${
-                filter === f ? 'bg-gold text-white' : 'text-gray-500 hover:bg-gray-50'
+                filter === f ? 'bg-gradient-gold text-charcoal' : 'text-white/50 hover:text-white'
               }`}
             >
               {f === 'week' ? 'This Week' : f === 'all' ? 'All Time' : 'Today'}
@@ -313,30 +315,32 @@ function OrderHistory() {
           icon={IndianRupee}
           label={filter === 'today' ? "Today's Revenue" : 'Revenue'}
           value={formatINR(revenue)}
-          accent="from-gold/20 to-gold/5 text-gold-dark"
+          glow="shadow-glow-gold"
+          iconClass="text-gold"
         />
         <SummaryCard
           icon={Receipt}
           label="Orders"
           value={String(filtered.length)}
-          accent="from-charcoal/10 to-transparent text-charcoal"
+          glow="shadow-glow-violet"
+          iconClass="text-violet-light"
         />
       </div>
 
       {loading ? (
         <div className="space-y-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-14 animate-pulse rounded-xl bg-white" />
+            <div key={i} className="h-14 rounded-xl glass shimmer" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center text-gray-400">
+        <div className="rounded-2xl border border-dashed border-white/15 glass py-16 text-center text-white/40">
           No orders for this period yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-2xl glass">
           <table className="w-full text-sm">
-            <thead className="border-b border-gray-100 bg-gray-50 text-left text-gray-500">
+            <thead className="border-b border-white/10 bg-white/5 text-left text-white/50">
               <tr>
                 <th className="px-5 py-3 font-semibold">Order ID</th>
                 <th className="px-5 py-3 font-semibold">Table</th>
@@ -346,7 +350,7 @@ function OrderHistory() {
                 <th className="px-5 py-3 font-semibold">Time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-white/5">
               {filtered.map((o) => (
                 <OrderRow key={o.id} order={o} />
               ))}
@@ -360,17 +364,17 @@ function OrderHistory() {
 
 function OrderRow({ order }: { order: Order }) {
   return (
-    <tr className="transition hover:bg-gray-50/50">
-      <td className="px-5 py-3 font-bold text-gray-900">{order.orderId}</td>
-      <td className="px-5 py-3 text-gray-600">{order.tableNumber}</td>
-      <td className="max-w-xs truncate px-5 py-3 text-gray-500">{summariseItems(order.items)}</td>
-      <td className="px-5 py-3 font-bold text-gray-900">{formatINR(order.totalAmount)}</td>
+    <tr className="transition hover:bg-white/[0.03]">
+      <td className="px-5 py-3 font-bold text-white">{order.orderId}</td>
+      <td className="px-5 py-3 text-white/60">{order.tableNumber}</td>
+      <td className="max-w-xs truncate px-5 py-3 text-white/50">{summariseItems(order.items)}</td>
+      <td className="px-5 py-3 font-bold text-gradient-gold">{formatINR(order.totalAmount)}</td>
       <td className="px-5 py-3">
         <span className={`rounded-full px-2.5 py-1 text-xs font-bold capitalize ${STATUS_PILL[order.status]}`}>
           {order.status}
         </span>
       </td>
-      <td className="px-5 py-3 text-gray-500">
+      <td className="px-5 py-3 text-white/50">
         <span title={formatTime(order.timestamp)}>{timeAgo(order.timestamp)}</span>
       </td>
     </tr>
@@ -381,21 +385,23 @@ function SummaryCard({
   icon: Icon,
   label,
   value,
-  accent,
+  glow,
+  iconClass,
 }: {
   icon: typeof IndianRupee
   label: string
   value: string
-  accent: string
+  glow: string
+  iconClass: string
 }) {
   return (
-    <div className={`flex items-center gap-4 rounded-2xl border border-gray-100 bg-gradient-to-br p-5 shadow-sm ${accent}`}>
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/60">
-        <Icon size={24} />
+    <div className={`flex items-center gap-4 rounded-2xl glass p-5 ${glow}`}>
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+        <Icon size={24} className={iconClass} />
       </div>
       <div>
-        <p className="text-sm font-medium opacity-70">{label}</p>
-        <p className="text-2xl font-black">{value}</p>
+        <p className="text-sm font-medium text-white/50">{label}</p>
+        <p className="font-display text-2xl font-bold text-white">{value}</p>
       </div>
     </div>
   )

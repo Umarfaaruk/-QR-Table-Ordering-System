@@ -3,7 +3,6 @@ import { QRCodeCanvas } from 'qrcode.react'
 import { Download, Printer, QrCode } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-/** Downloads a single table's QR code as a PNG. */
 function downloadQR(tableId: string) {
   const canvas = document.getElementById(`qr-${tableId}`) as HTMLCanvasElement | null
   if (!canvas) return
@@ -32,41 +31,39 @@ export default function QRGenerator() {
   return (
     <div>
       {/* Controls */}
-      <div className="no-print mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="no-print mb-6 flex flex-wrap items-end gap-4 rounded-2xl glass p-5">
         <div>
-          <label className="mb-1 block text-sm font-semibold text-gray-600">
-            Number of Tables
-          </label>
+          <label className="mb-1 block text-sm font-semibold text-white/60">Number of Tables</label>
           <input
             type="number"
             min={1}
             max={100}
             value={tableCount}
             onChange={(e) => setTableCount(Number(e.target.value))}
-            className="w-32 rounded-xl border border-gray-200 px-4 py-2.5 outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30"
+            className="w-32 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none transition focus:border-gold/50 focus:ring-2 focus:ring-gold/20"
           />
         </div>
         <button
           onClick={generate}
-          className="flex items-center gap-2 rounded-xl bg-gold px-5 py-2.5 font-bold text-white transition hover:bg-gold-dark"
+          className="flex items-center gap-2 rounded-xl bg-gradient-gold px-5 py-2.5 font-bold text-charcoal shadow-glow-gold transition hover:brightness-105"
         >
           <QrCode size={18} /> Generate QR Codes
         </button>
         <button
           onClick={() => window.print()}
-          className="flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-2.5 font-bold text-gray-700 transition hover:bg-gray-50"
+          className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 font-bold text-white transition hover:bg-white/10"
         >
           <Printer size={18} /> Print All
         </button>
-        <p className="ml-auto self-center text-sm text-gray-400">
-          Each code links to <code className="text-gray-600">/menu/&lt;table&gt;</code>
+        <p className="ml-auto self-center text-sm text-white/40">
+          Each code links to <code className="rounded bg-white/10 px-1.5 py-0.5 text-white/70">/menu/&lt;table&gt;</code>
         </p>
       </div>
 
       {/* Grid */}
       <div ref={printRef} className="print-area">
         <div className="mb-4 hidden text-center print:block">
-          <h1 className="text-2xl font-black">Café Spice — Scan to Order</h1>
+          <h1 className="text-2xl font-black text-black">Café Spice — Scan to Order</h1>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {tables.map((tableId) => {
@@ -75,21 +72,12 @@ export default function QRGenerator() {
             return (
               <div
                 key={tableId}
-                className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-4 shadow-sm print:break-inside-avoid print:shadow-none"
+                className="flex flex-col items-center rounded-2xl border border-white/10 bg-white p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-glow-gold print:break-inside-avoid print:shadow-none"
               >
                 <div className="rounded-xl bg-white p-2">
-                  <QRCodeCanvas
-                    id={`qr-${tableId}`}
-                    value={url}
-                    size={140}
-                    level="M"
-                    includeMargin
-                    fgColor="#1a1a2e"
-                  />
+                  <QRCodeCanvas id={`qr-${tableId}`} value={url} size={140} level="M" includeMargin fgColor="#1a1a2e" />
                 </div>
-                <p className="mt-3 text-lg font-extrabold text-gray-900">
-                  Table {num}
-                </p>
+                <p className="mt-3 text-lg font-extrabold text-gray-900">Table {num}</p>
                 <p className="text-[10px] text-gray-400">Scan to view menu</p>
                 <button
                   onClick={() => downloadQR(tableId)}
