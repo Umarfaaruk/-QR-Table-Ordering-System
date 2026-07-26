@@ -27,6 +27,7 @@ import MenuItemModal from '../components/MenuItemModal'
 import QRGenerator from '../components/QRGenerator'
 import VegBadge from '../components/VegBadge'
 import AuroraBackground from '../components/AuroraBackground'
+import FoodImage from '../components/FoodImage'
 
 type Tab = 'menu' | 'qr' | 'history'
 
@@ -210,7 +211,16 @@ function MenuManagement() {
                 <tbody className="divide-y divide-white/5">
                   {list.map((item) => (
                     <tr key={item.id} className="transition hover:bg-white/[0.03]">
-                      <td className="w-12 py-3 pl-5 text-2xl">{item.emoji}</td>
+                      <td className="w-16 py-3 pl-5">
+                        <FoodImage
+                          src={item.image}
+                          alt={item.name}
+                          emoji={item.emoji}
+                          className="h-11 w-11"
+                          emojiClassName="text-lg"
+                          rounded="rounded-lg"
+                        />
+                      </td>
                       <td className="py-3">
                         <div className="flex items-center gap-2">
                           <VegBadge isVeg={item.isVeg} size={14} />

@@ -18,6 +18,9 @@ export interface MenuItem {
   price: number
   category: Category
   isVeg: boolean
+  /** Photo URL for the dish. Rendered by <FoodImage />. */
+  image?: string
+  /** Fallback shown while the photo loads or if it fails/is absent. */
   emoji: string
 }
 

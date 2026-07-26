@@ -2,6 +2,7 @@ import { Plus, Minus } from 'lucide-react'
 import type { MenuItem } from '../types'
 import { formatINR } from '../utils/format'
 import VegBadge from './VegBadge'
+import FoodImage from './FoodImage'
 
 interface MenuCardProps {
   item: MenuItem
@@ -27,10 +28,15 @@ export default function MenuCard({
           : 'glass hover:-translate-y-0.5 hover:border-white/20'
       }`}
     >
-      {/* Emoji tile with glow */}
-      <div className="relative flex h-24 w-24 flex-none items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent text-4xl">
-        <div className="absolute inset-0 rounded-xl bg-gold/10 opacity-0 blur-lg transition group-hover:opacity-100" />
-        <span className="relative drop-shadow-lg">{item.emoji}</span>
+      {/* Dish photo */}
+      <div className="relative h-28 w-28 flex-none">
+        <div className="absolute -inset-1 rounded-xl bg-gold/20 opacity-0 blur-lg transition group-hover:opacity-100" />
+        <FoodImage
+          src={item.image}
+          alt={item.name}
+          emoji={item.emoji}
+          className="relative h-full w-full transition-transform duration-500 group-hover:scale-[1.04]"
+        />
       </div>
 
       {/* Details */}

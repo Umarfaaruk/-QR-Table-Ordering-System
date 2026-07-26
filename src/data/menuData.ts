@@ -1,9 +1,49 @@
 import type { MenuItem } from '../types'
 
 // ─────────────────────────────────────────────────────────────
+// Dish photography
+// ─────────────────────────────────────────────────────────────
+// All photo URLs live here so they're trivial to swap for the
+// restaurant's own food photography before a client demo.
+//
+// To use your own images, either:
+//   • replace a URL below, or
+//   • drop files into `public/menu/` and use "/menu/butter-chicken.jpg", or
+//   • edit the "Image URL" field on any item in Admin → Menu Management.
+//
+// Every photo degrades gracefully: while it loads the card shows a
+// shimmer, and if it fails (offline / bad URL) it falls back to a
+// gradient tile + emoji. The menu never shows a broken image.
+// ─────────────────────────────────────────────────────────────
+
+/** Shared Unsplash transform: square-ish crop, compressed for fast mobile loads. */
+const shot = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=400&h=400&q=70`
+
+const PHOTOS = {
+  springRolls: shot('1544025162-d76694265947'),
+  paneerTikka: shot('1567188040759-fb8a883dc6d8'),
+  chickenWings: shot('1608039755401-742074f0548d'),
+  mushroomSoup: shot('1547592166-23ac45744acd'),
+  butterChicken: shot('1603894584373-5ac82b2ae398'),
+  paneerButterMasala: shot('1631452180519-c014fe946bc7'),
+  vegBiryani: shot('1596797038530-2c107229654b'),
+  chickenBiryani: shot('1563379091339-03b21ab4a4f8'),
+  dalMakhani: shot('1546833999-b9f581a1996d'),
+  grilledFish: shot('1519708227418-c8fd9a32b7a2'),
+  masalaChai: shot('1571934811356-5cc061b6821f'),
+  coldCoffee: shot('1461023058943-07fcbe16d735'),
+  limeSoda: shot('1621263764928-df1444c5e859'),
+  mangoLassi: shot('1553530666-ba11a7da3888'),
+  gulabJamun: shot('1601050690597-df0568f70950'),
+  lavaCake: shot('1624353365286-3f8d62daad51'),
+  kulfi: shot('1567206563064-6f60f40a2b57'),
+}
+
+// ─────────────────────────────────────────────────────────────
 // Hardcoded demo menu for Café Spice.
-// Used directly in DEMO MODE and seeded into Firestore on first run
-// when a real Firebase project is connected (see menuService.ts).
+// Used directly in DEMO MODE and as the seed/fallback when a real
+// Firebase project is connected (see menuService.ts).
 // ─────────────────────────────────────────────────────────────
 
 export const DEMO_MENU: MenuItem[] = [
@@ -15,6 +55,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 149,
     category: 'Starters',
     isVeg: true,
+    image: PHOTOS.springRolls,
     emoji: '🥟',
   },
   {
@@ -24,6 +65,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 229,
     category: 'Starters',
     isVeg: true,
+    image: PHOTOS.paneerTikka,
     emoji: '🧀',
   },
   {
@@ -33,6 +75,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 279,
     category: 'Starters',
     isVeg: false,
+    image: PHOTOS.chickenWings,
     emoji: '🍗',
   },
   {
@@ -42,6 +85,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 129,
     category: 'Starters',
     isVeg: true,
+    image: PHOTOS.mushroomSoup,
     emoji: '🍲',
   },
 
@@ -53,6 +97,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 349,
     category: 'Main Course',
     isVeg: false,
+    image: PHOTOS.butterChicken,
     emoji: '🍛',
   },
   {
@@ -62,6 +107,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 299,
     category: 'Main Course',
     isVeg: true,
+    image: PHOTOS.paneerButterMasala,
     emoji: '🍲',
   },
   {
@@ -71,6 +117,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 249,
     category: 'Main Course',
     isVeg: true,
+    image: PHOTOS.vegBiryani,
     emoji: '🍚',
   },
   {
@@ -80,6 +127,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 349,
     category: 'Main Course',
     isVeg: false,
+    image: PHOTOS.chickenBiryani,
     emoji: '🍗',
   },
   {
@@ -89,6 +137,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 219,
     category: 'Main Course',
     isVeg: true,
+    image: PHOTOS.dalMakhani,
     emoji: '🥘',
   },
   {
@@ -98,6 +147,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 399,
     category: 'Main Course',
     isVeg: false,
+    image: PHOTOS.grilledFish,
     emoji: '🐟',
   },
 
@@ -109,6 +159,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 49,
     category: 'Beverages',
     isVeg: true,
+    image: PHOTOS.masalaChai,
     emoji: '☕',
   },
   {
@@ -118,6 +169,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 129,
     category: 'Beverages',
     isVeg: true,
+    image: PHOTOS.coldCoffee,
     emoji: '🥤',
   },
   {
@@ -127,6 +179,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 79,
     category: 'Beverages',
     isVeg: true,
+    image: PHOTOS.limeSoda,
     emoji: '🍋',
   },
   {
@@ -136,6 +189,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 99,
     category: 'Beverages',
     isVeg: true,
+    image: PHOTOS.mangoLassi,
     emoji: '🥭',
   },
 
@@ -147,6 +201,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 89,
     category: 'Desserts',
     isVeg: true,
+    image: PHOTOS.gulabJamun,
     emoji: '🍮',
   },
   {
@@ -156,6 +211,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 179,
     category: 'Desserts',
     isVeg: true,
+    image: PHOTOS.lavaCake,
     emoji: '🍫',
   },
   {
@@ -165,6 +221,7 @@ export const DEMO_MENU: MenuItem[] = [
     price: 99,
     category: 'Desserts',
     isVeg: true,
+    image: PHOTOS.kulfi,
     emoji: '🍦',
   },
 ]

@@ -3,6 +3,7 @@ import { X, Plus, Minus, Trash2, Loader2, ShoppingBag } from 'lucide-react'
 import type { CartItem } from '../types'
 import { formatINR } from '../utils/format'
 import VegBadge from './VegBadge'
+import FoodImage from './FoodImage'
 
 interface CartDrawerProps {
   open: boolean
@@ -68,9 +69,14 @@ export default function CartDrawer({
             <ul className="space-y-3">
               {items.map((it) => (
                 <li key={it.id} className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 flex-none items-center justify-center rounded-lg border border-white/10 bg-white/5 text-xl">
-                    {it.emoji}
-                  </span>
+                  <FoodImage
+                    src={it.image}
+                    alt={it.name}
+                    emoji={it.emoji}
+                    className="h-11 w-11 flex-none"
+                    emojiClassName="text-lg"
+                    rounded="rounded-lg"
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <VegBadge isVeg={it.isVeg} size={14} />

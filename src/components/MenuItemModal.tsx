@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import { CATEGORIES, type Category, type MenuItem } from '../types'
+import FoodImage from './FoodImage'
 
 interface MenuItemModalProps {
   initial?: MenuItem | null
@@ -21,6 +22,7 @@ export default function MenuItemModal({ initial, saving, onClose, onSave }: Menu
   const [description, setDescription] = useState(initial?.description ?? '')
   const [isVeg, setIsVeg] = useState(initial?.isVeg ?? true)
   const [emoji, setEmoji] = useState(initial?.emoji ?? '🍛')
+  const [image, setImage] = useState(initial?.image ?? '')
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,6 +32,7 @@ export default function MenuItemModal({ initial, saving, onClose, onSave }: Menu
       price: Number(price) || 0,
       description: description.trim(),
       isVeg,
+      image: image.trim() || undefined,
       emoji,
     })
   }
@@ -77,8 +80,35 @@ export default function MenuItemModal({ initial, saving, onClose, onSave }: Menu
             <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Short, appetising one-liner" className={inputCls} />
           </div>
 
+          {/* Photo */}
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-white/60">Emoji</label>
+            <label className="mb-1 block text-sm font-semibold text-white/60">Photo URL</label>
+            <div className="flex items-center gap-3">
+              <FoodImage
+                src={image.trim() || undefined}
+                alt={name || 'Preview'}
+                emoji={emoji}
+                className="h-16 w-16 flex-none"
+                emojiClassName="text-2xl"
+                rounded="rounded-lg"
+              />
+              <input
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="https://… or /menu/dish.jpg"
+                className={inputCls}
+              />
+            </div>
+            <p className="mt-1.5 text-[11px] text-white/35">
+              Leave blank to use the emoji tile. Local files go in{' '}
+              <code className="text-white/50">public/menu/</code>.
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-white/60">
+              Emoji <span className="font-normal text-white/35">(fallback)</span>
+            </label>
             <div className="flex flex-wrap gap-1.5">
               {EMOJI_OPTIONS.map((e) => (
                 <button
